@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float m_jumpSpeed;
+    public float m_jumpForce;
     public float m_moveSpeed;
     private bool m_isJump = false;
     private bool m_isRunning = true;
@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetButtonDown("Jump"))
         {
             m_isJump = true;
         }
@@ -32,7 +32,8 @@ public class Player : MonoBehaviour
         if (m_isJump)
         {
             m_animator.SetBool("Jump", true);
-            m_rigidBody.AddForce(Vector2.up * m_jumpSpeed, ForceMode2D.Impulse);
+            m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, m_jumpForce);
+
             m_isJump = false;
         }
         m_rigidBody.position += new Vector2(m_moveSpeed * Time.fixedDeltaTime, 0);
