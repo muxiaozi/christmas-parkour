@@ -7,10 +7,12 @@ public class Player : MonoBehaviour
 {
     public float m_jumpForce;
     public float m_moveSpeed;
-    private bool m_isJump = false;
-    private bool m_isRunning = true;
+    private bool m_needJump = false;
+    private bool m_canJump = true;
+    private bool m_canDoubleJump = true;
     Animator m_animator;
     Rigidbody2D m_rigidBody;
+    public Camera m_camera;
 
     private void Awake()
     {
@@ -18,30 +20,44 @@ public class Player : MonoBehaviour
         m_rigidBody = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetButtonDown("Jump"))
         {
-            m_isJump = true;
+            m_needJump = true;
         }
     }
 
     private void FixedUpdate()
     {
-        if (m_isJump)
+        if (m_needJump)
         {
-            m_animator.SetBool("Jump", true);
-            m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, m_jumpForce);
-
-            m_isJump = false;
+            m_needJump = false;
+            if (m_canJump)
+            {
+                m_canJump = false;
+                m_animator.SetBool("Jump", true);
+                m_animator.SetBool("Run", false);
+                m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, m_jumpForce);
+            }
+            else if (m_canDoubleJump)
+            {
+                m_canDoubleJump = false;
+                m_animator.SetBool("Jump", true);
+                m_animator.SetBool("Run", false);
+                m_rigidBody.velocity = new Vector2(m_rigidBody.velocity.x, m_jumpForce);
+            }
         }
-        m_rigidBody.position += new Vector2(m_moveSpeed * Time.fixedDeltaTime, 0);
+
+        var offset = m_camera.transform.position.x - transform.position.x;
+        m_rigidBody.velocity = new Vector2(m_moveSpeed + offset, m_rigidBody.velocity.y);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        m_isJump = false;
+        m_canJump = true;
+        m_canDoubleJump = true;
+        m_animator.SetBool("Run", true);
         m_animator.SetBool("Jump", false);
     }
 }
