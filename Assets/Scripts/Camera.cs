@@ -13,11 +13,6 @@ public class Camera : MonoBehaviour
         m_isGameover = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     private void FixedUpdate()
     {
         if (!m_isGameover)

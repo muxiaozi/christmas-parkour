@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -25,6 +26,14 @@ public class Player : MonoBehaviour
         if (Input.GetButtonDown("Jump"))
         {
             m_needJump = true;
+        }
+        else if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                m_needJump = true;
+            }
         }
     }
 
